@@ -15,19 +15,28 @@ export ErgmGraph,
     Model,
     mcmc_step,
     mcmc_sampler,
+    MCMCResult,
     Change,
     delta_edges,
     delta_degree,
     Term,
     EdgeTerm,
     DegreeTerm,
+    TriangleTerm,
+    triangles,
     fit
 
 """
     ErgmGraph
 
-A struct to represent a graph for ERGM analysis. It contains the graph itself,
-as well as attributes for vertices, edges, and the graph as a whole.
+The core data structure for `ERGM.jl`. It wraps a `Graphs.AbstractGraph` and augments it with
+tables for vertex, edge, and graph-level attributes.
+
+# Fields
+- `graph::AbstractGraph`: The underlying graph structure (from `Graphs.jl`).
+- `vertex_attributes::DataFrame`: A DataFrame where each row `i` corresponds to vertex `i`.
+- `edge_attributes::Dict{Tuple{Int,Int},NamedTuple}`: A dictionary storing attributes for specific edges.
+- `graph_attributes::Dict{Symbol,Any}`: A dictionary for global graph attributes (e.g., "name", "date").
 """
 struct ErgmGraph
     graph::AbstractGraph
@@ -39,7 +48,8 @@ end
 """
     ErgmGraph(graph::AbstractGraph)
 
-Create an `ErgmGraph` from a `Graphs.jl` graph object.
+Construct a new `ErgmGraph` from an existing `Graphs.AbstractGraph`.
+Initializes empty attribute stores. Vertex attributes are initialized with an `id` column.
 """
 function ErgmGraph(graph::AbstractGraph)
     num_vertices = nv(graph)
@@ -52,7 +62,7 @@ end
 """
     set_vertex_attribute!(g::ErgmGraph, name::Symbol, value::AbstractVector)
 
-Set a vertex attribute for all vertices in the graph.
+Assign a vector of values to a vertex attribute `name`. The length of `value` must match the number of vertices.
 """
 function set_vertex_attribute!(g::ErgmGraph, name::Symbol, value::AbstractVector)
     if length(value) != nv(g.graph)
@@ -64,7 +74,7 @@ end
 """
     get_vertex_attribute(g::ErgmGraph, name::Symbol)
 
-Get a vertex attribute for all vertices in the graph.
+Retrieve the vector of values for vertex attribute `name`.
 """
 function get_vertex_attribute(g::ErgmGraph, name::Symbol)
     return g.vertex_attributes[!, name]
@@ -73,7 +83,8 @@ end
 """
     set_edge_attribute!(g::ErgmGraph, u::Int, v::Int, name::Symbol, value)
 
-Set an attribute for a specific edge.
+Set the value of attribute `name` for the edge connecting vertices `u` and `v`.
+Errors if the edge does not exist.
 """
 function set_edge_attribute!(g::ErgmGraph, u::Int, v::Int, name::Symbol, value)
     if !has_edge(g.graph, u, v)
@@ -91,7 +102,7 @@ end
 """
     get_edge_attribute(g::ErgmGraph, u::Int, v::Int, name::Symbol)
 
-Get an attribute for a specific edge.
+Retrieve the value of attribute `name` for the edge (`u`, `v`). Returns `missing` if the attribute is not set.
 """
 function get_edge_attribute(g::ErgmGraph, u::Int, v::Int, name::Symbol)
     key = (u, v)
@@ -105,7 +116,7 @@ end
 """
     set_graph_attribute!(g::ErgmGraph, name::Symbol, value)
 
-Set a graph-level attribute.
+Set a global attribute `name` for the graph to `value`.
 """
 function set_graph_attribute!(g::ErgmGraph, name::Symbol, value)
     g.graph_attributes[name] = value
@@ -114,7 +125,7 @@ end
 """
     get_graph_attribute(g::ErgmGraph, name::Symbol)
 
-Get a graph-level attribute.
+Retrieve the value of the global graph attribute `name`. Returns `missing` if not set.
 """
 function get_graph_attribute(g::ErgmGraph, name::Symbol)
     if haskey(g.graph_attributes, name)
@@ -125,7 +136,7 @@ function get_graph_attribute(g::ErgmGraph, name::Symbol)
 end
 
 include("model_terms.jl")
-include("changelog.jl")
+include("change_stats.jl")
 include("mcmc.jl")
 include("ui.jl")
 

@@ -9,11 +9,13 @@ description = "A Julia implementation of the ergm R package for statistical netw
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
 DataFrames = "1"
 Documenter = "1"
 Graphs = "1"
+LinearAlgebra = "1.12.0"
 Test = "1.11.0"
 julia = "1"

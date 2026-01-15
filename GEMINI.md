@@ -61,8 +61,8 @@ The generated documentation will be in the `docs/build/` directory.
 
 ## Development Conventions
 
-*   **Code Style**: The code follows standard Julia conventions. It is organized into modules and files with specific purposes (`mcmc.jl`, `model_terms.jl`, etc.).
+*   **Code Style**: The code follows standard Julia conventions. It is organized into modules and files with specific purposes (`mcmc.jl`, `model_terms.jl`, `change_stats.jl`, etc.).
 *   **Documentation**: Functions are documented using docstrings, which are used to generate the official documentation.
 *   **Testing**: Tests are located in the `test/` directory and use `@testset` to group related tests. The tests also serve as a good source of examples for how to use the package's functionality.
 *   **Dependencies**: Project dependencies are managed through the `Project.toml` file.
-*   **User Interface**: The main user-facing functions are intended to be in `src/ui.jl`, providing a high-level API for users. The `fit` function is the primary entry point for model fitting.
+*   **User Interface**: The main user-facing functions are intended to be in `src/ui.jl`, providing a high-level API for users. The `fit` function is the primary entry point for model fitting and returns a `MCMCResult` struct containing simulation statistics.

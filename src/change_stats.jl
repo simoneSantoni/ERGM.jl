@@ -1,6 +1,6 @@
-# Changelog for Ergm.jl
+# Change statistics for Ergm.jl
 
-using Graphs: degree
+using Graphs: degree, common_neighbors
 
 """
     Change
@@ -28,8 +28,9 @@ end
 Calculate the change in the number of vertices with degree `k` given a `Change` object.
 """
 function delta_degree(g::ErgmGraph, k::Int, change::Change)
-    du = degree(g.graph)[change.u]
-    dv = degree(g.graph)[change.v]
+    # Optimized: get degree of specific vertices directly
+    du = degree(g.graph, change.u)
+    dv = degree(g.graph, change.v)
 
     delta = 0
     if change.add
@@ -60,4 +61,15 @@ function delta_degree(g::ErgmGraph, k::Int, change::Change)
         end
     end
     return delta
+end
+
+"""
+    delta_triangles(g::ErgmGraph, change::Change)
+
+Calculate the change in the number of triangles given a `Change` object.
+"""
+function delta_triangles(g::ErgmGraph, change::Change)
+    # The number of new/removed triangles is exactly the number of common neighbors
+    num_common = length(common_neighbors(g.graph, change.u, change.v))
+    return change.add ? num_common : -num_common
 end

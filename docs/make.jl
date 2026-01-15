@@ -10,9 +10,14 @@ makedocs(;
         prettyurls=get(ENV, "CI", "false") == "true",
         canonical="https://simoneSantoni.github.io/ERGM.jl",
         assets=String[],
+        repolink="https://github.com/simoneSantoni/ERGM.jl",
+        edit_link="main",
+        ansicolor=true,
+        collapselevel=1,
     ),
     pages=[
         "Home" => "index.md",
+        "Tutorial" => "tutorial.md",
         "API Reference" => "api.md",
     ],
 )

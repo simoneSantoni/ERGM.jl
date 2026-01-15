@@ -1,7 +1,7 @@
 # Model terms for Ergm.jl
 
 using Graphs: ne
-import Graphs: degree
+import Graphs: degree, triangles
 
 """
     edges(g::ErgmGraph)
@@ -19,4 +19,13 @@ Calculate the number of vertices with degree `k`. This term is used to model the
 """
 function degree(g::ErgmGraph, k::Int)
     return count(d -> d == k, degree(g.graph))
+end
+
+"""
+    triangles(g::ErgmGraph)
+
+Calculate the total number of triangles in the graph.
+"""
+function triangles(g::ErgmGraph)
+    return sum(triangles(g.graph)) ÷ 3
 end
